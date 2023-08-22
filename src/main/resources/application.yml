@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/database
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 20
+      max-lifetime: 180000
+      idle-timeout: 170000
+  sql:
+    init:
+      mode: never
+
