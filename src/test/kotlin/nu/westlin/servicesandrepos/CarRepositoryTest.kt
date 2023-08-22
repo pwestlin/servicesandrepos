@@ -19,7 +19,7 @@ class CarRepositoryTest : JdbcTest() {
         val car = Car(
             regNo = Car.SwedishRegNo("ABC123"),
             year = 1986,
-            manufacturer = Manufacturer(id = 1558, name = "Mable Austin"),
+            manufacturer = Manufacturer(name = "Mable Austin", country = "Not home"),
             model = Model(name = "Preston Hood"),
             engine = Engine(cc = 3880, cylinders = 4)
         )
@@ -35,7 +35,7 @@ class CarRepositoryTest : JdbcTest() {
         val car = Car(
             regNo = Car.SwedishRegNo("ABC123"),
             year = 1986,
-            manufacturer = Manufacturer(id = 1558, name = "Mable Austin"),
+            manufacturer = Manufacturer(name = "Mable Austin", country = "Far, far away"),
             model = Model(name = "Preston Hood"),
             engine = Engine(cc = 3880, cylinders = 4)
         )

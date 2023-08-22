@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 
 data class Manufacturer(
-    val id: Int,
-    val name: String
+    val name: String,
+    val country: String
 ) {
 
     companion object
@@ -25,9 +25,12 @@ class ManufacturerRepository(
         )
     }
 
-    private class ManufacturerRowMapper: RowMapper<Manufacturer> {
+    private class ManufacturerRowMapper : RowMapper<Manufacturer> {
         override fun mapRow(rs: ResultSet, rowNum: Int): Manufacturer {
-            return Manufacturer(id = rs.getInt("id"), name = rs.getString("name"))
+            return Manufacturer(
+                name = rs.getString("name"),
+                country = rs.getString("country")
+            )
         }
 
     }
