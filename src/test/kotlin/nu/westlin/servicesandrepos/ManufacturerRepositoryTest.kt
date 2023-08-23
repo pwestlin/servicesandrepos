@@ -16,32 +16,55 @@ class ManufacturerRepositoryTest : JdbcTest() {
 
     @Test
     fun `get all`() {
-        val manufacturers = mapOf(
-            1 to Manufacturer(name = "Volvo", country = "Sweden"),
-            2 to Manufacturer(name = "Ford", country = "USA"),
-            3 to Manufacturer(name = "Peugeot", country = "France")
+        val manufacturers = listOf(
+            ManufacurerWithIds(manufacturer = Manufacturer(name = "Volvo", country = "Sweden"), id = 1, carId = 1),
+            ManufacurerWithIds(manufacturer = Manufacturer(name = "Ford", country = "USA"), id = 2, carId = 2),
+            ManufacurerWithIds(manufacturer = Manufacturer(name = "Peugeot", country = "France"), id = 3, carId = 3)
         )
 
-        saveManufacturers(manufacturers)
+        save(manufacturers)
 
-        assertThat(manufacturerRepository.all()).containsExactlyInAnyOrderElementsOf(
-            manufacturers.values
-        )
+        assertThat(manufacturerRepository.all()).containsExactlyInAnyOrderElementsOf(manufacturers.map { it.manufacturer })
     }
 
-    private fun saveManufacturers(manufacturers: Map<Int, Manufacturer>) {
-        // TODO petves: Utan list?
-        val list = manufacturers.map { ObjectWithId(id = it.key, theObject = it.value) }
+    @Test
+    fun `by car id`() {
+        val manufacurerWithIds =
+            ManufacurerWithIds(manufacturer = Manufacturer(name = "Volvo", country = "Sweden"), id = 1, carId = 1)
+
+        save(manufacurerWithIds)
+
+        assertThat(manufacturerRepository.byCarId(manufacurerWithIds.carId)).isEqualTo(manufacurerWithIds.manufacturer)
+    }
+
+    private fun save(manufacurerWithIds: ManufacurerWithIds) {
+        save(listOf(manufacurerWithIds))
+    }
+
+    private fun save(manufacurerWithIdsList: List<ManufacurerWithIds>) {
         SimpleJdbcInsert(jdbcTemplate)
             .withTableName("manufacturer")
             .executeBatch(
-                *list.map { manufacturer ->
+                *manufacurerWithIdsList.map { manufacurerWithIds ->
                     mapOf(
-                        "id" to manufacturer.id,
-                        "name" to manufacturer.theObject.name,
-                        "country" to manufacturer.theObject.country
+                        "id" to manufacurerWithIds.id,
+                        "name" to manufacurerWithIds.manufacturer.name,
+                        "country" to manufacurerWithIds.manufacturer.country
+                    )
+                }.toTypedArray()
+            )
+
+        SimpleJdbcInsert(jdbcTemplate)
+            .withTableName("manufaturer_car")
+            .executeBatch(
+                *manufacurerWithIdsList.map { manufacurerWithIds ->
+                    mapOf(
+                        "manufacturerid" to manufacurerWithIds.id,
+                        "carid" to manufacurerWithIds.carId,
                     )
                 }.toTypedArray()
             )
     }
+
+    private data class ManufacurerWithIds(val manufacturer: Manufacturer, val id: Int, val carId: Int)
 }

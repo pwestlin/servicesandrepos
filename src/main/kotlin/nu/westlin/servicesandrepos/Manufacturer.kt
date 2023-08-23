@@ -25,6 +25,14 @@ class ManufacturerRepository(
         )
     }
 
+    fun byCarId(carId: Int): Manufacturer {
+        return jdbcOperations.queryForObject(
+            "select * from manufacturer where id in (select manufacturerid from manufaturer_car where carid = ?)",
+            ManufacturerRowMapper(),
+            carId
+        )!!
+    }
+
     private class ManufacturerRowMapper : RowMapper<Manufacturer> {
         override fun mapRow(rs: ResultSet, rowNum: Int): Manufacturer {
             return Manufacturer(
